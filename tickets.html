@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Tickets</title>
+  <script src="jspdf.umd.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Bebas+Neue&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black: #0a0a0a;
+      --white: #f5f5f0;
+      --grey: #999;
+      --mid: #2a2a2a;
+      --line: #2a2a2a;
+    }
+
+    html, body { height: 100%; overflow: hidden; }
+
+    body {
+      font-family: 'DM Mono', monospace;
+      background: var(--black);
+      color: var(--white);
+      display: grid;
+      grid-template-rows: auto 1fr;
+      height: 100vh;
+    }
+
+    /* ── HEADER ── */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: .55rem 1.5rem;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.5rem;
+      letter-spacing: .12em;
+    }
+
+    .logo span {
+      color: var(--grey);
+      font-size: .85rem;
+      letter-spacing: .05em;
+      margin-left: .7rem;
+      font-family: 'DM Mono', monospace;
+      font-weight: 400;
+    }
+
+    .header-hints {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .header-hint {
+      font-size: .6rem;
+      color: var(--grey);
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: .4rem;
+    }
+
+    .header-hint::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border: 1px solid var(--grey);
+    }
+
+    .header-hint.rect::before { border-radius: 0; aspect-ratio: 16/9; width: 10px; height: 6px; }
+    .header-hint.sq::before   { border-radius: 0; width: 6px; height: 6px; }
+
+    /* ── MAIN GRID ── */
+    .app {
+      display: grid;
+      grid-template-columns: 250px 1fr 190px;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    /* ── PANELS ── */
+    .panel {
+      border-right: 1px solid var(--line);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .panel:last-child { border-right: none; }
+
+    .panel-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: .95rem;
+      letter-spacing: .15em;
+      color: var(--grey);
+      padding: .65rem 1.2rem .45rem;
+      border-bottom: 1px solid var(--line);
+      text-transform: uppercase;
+    }
+
+    .panel-body {
+      flex: 1;
+      padding: .85rem 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: .75rem;
+      overflow-y: auto;
+    }
+
+    /* ── SECTION LABELS ── */
+    .section-label {
+      font-size: .6rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--grey);
+      border-bottom: 1px solid var(--line);
+      padding-bottom: .35rem;
+      margin-top: .2rem;
+    }
+
+    /* ── UPLOAD BLOCKS ── */
+    .upload-block { display: flex; flex-direction: column; gap: .35rem; }
+
+    .upload-label {
+      font-size: .6rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--grey);
+    }
+
+    .ratio-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: .3rem;
+      font-size: .58rem;
+      background: var(--mid);
+      color: var(--grey);
+      border: 1px solid var(--line);
+      border-radius: 2px;
+      padding: .12rem .45rem;
+      width: fit-content;
+    }
+
+    .ratio-tag strong { color: var(--white); }
+
+    .file-btn {
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+      background: var(--mid);
+      border: 1px solid var(--line);
+      border-radius: 3px;
+      padding: .5rem .75rem;
+      font-family: 'DM Mono', monospace;
+      font-size: .7rem;
+      color: var(--grey);
+      cursor: pointer;
+      transition: border-color .15s, color .15s;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .file-btn:hover { border-color: var(--white); color: var(--white); }
+    .file-btn.loaded { border-color: var(--white); color: var(--white); }
+
+    .file-btn input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* ── DIVIDER ── */
+    .divider { border: none; border-top: 1px solid var(--line); margin: .1rem 0; }
+
+    /* ── SLIDERS ── */
+    .slider-block { display: flex; flex-direction: column; gap: .28rem; }
+
+    .slider-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: .6rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--grey);
+    }
+
+    .slider-val { color: var(--white); min-width: 2.5rem; text-align: right; }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 2px;
+      background: var(--line);
+      outline: none;
+      border-radius: 0;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 11px; height: 11px;
+      background: var(--white);
+      border-radius: 0;
+      cursor: pointer;
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 11px; height: 11px;
+      background: var(--white);
+      border-radius: 0; border: none;
+      cursor: pointer;
+    }
+
+    /* ── CANVAS AREA ── */
+    .canvas-panel {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      gap: .6rem;
+      background: #111;
+      position: relative;
+    }
+
+    /* Tab switcher */
+    .canvas-tabs {
+      display: flex;
+      gap: 0;
+      border: 1px solid var(--line);
+      border-radius: 3px;
+      overflow: hidden;
+      align-self: flex-start;
+    }
+
+    .tab-btn {
+      background: var(--black);
+      border: none;
+      color: var(--grey);
+      font-family: 'DM Mono', monospace;
+      font-size: .62rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: .35rem .9rem;
+      cursor: pointer;
+      transition: background .12s, color .12s;
+      border-right: 1px solid var(--line);
+      flex: 1 1 auto;
+    }
+
+    .tab-btn:last-child { border-right: none; }
+    .tab-btn.active { background: var(--white); color: var(--black); }
+
+    .canvas-wrap { display: none; flex-direction: column; align-items: center; gap: .5rem; }
+    .canvas-wrap.active { display: flex; }
+
+    canvas {
+      max-width: 100%;
+      border: 1px solid var(--line);
+      display: block;
+      background: var(--mid);
+    }
+
+    #canvas       { max-height: calc(100vh - 160px); }
+    #canvasLogo   { max-height: calc(100vh - 160px); max-width: 260px; }
+
+    .canvas-meta {
+      font-size: .58rem;
+      color: var(--grey);
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+
+    /* ── RIGHT PANEL — two sections ── */
+    .actions-panel { overflow-y: auto; }
+
+    .export-section {
+      display: flex;
+      flex-direction: column;
+      border-bottom: 2px solid var(--white);
+    }
+
+    .export-section:last-child { border-bottom: none; flex: 1; }
+
+    .export-section-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: .85rem;
+      letter-spacing: .15em;
+      color: var(--grey);
+      padding: .5rem 1.1rem .3rem;
+      border-bottom: 1px solid var(--line);
+      text-transform: uppercase;
+    }
+
+    .action-btn {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: flex-end;
+      padding: .75rem 1.1rem .6rem;
+      border: none;
+      border-bottom: 1px solid var(--line);
+      background: var(--black);
+      color: var(--white);
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1rem;
+      letter-spacing: .12em;
+      cursor: pointer;
+      text-align: left;
+      transition: background .15s;
+    }
+
+    .action-btn:last-child { border-bottom: none; }
+    .action-btn:hover { background: var(--mid); }
+    .action-btn:disabled { opacity: .3; cursor: not-allowed; }
+
+    .action-btn .badge {
+      font-family: 'DM Mono', monospace;
+      font-size: .52rem;
+      letter-spacing: .1em;
+      color: var(--grey);
+      text-transform: uppercase;
+      margin-bottom: .25rem;
+    }
+
+    .action-btn.primary { background: var(--white); color: var(--black); }
+    .action-btn.primary:hover { background: #ddd; }
+    .action-btn.primary .badge { color: #666; }
+
+    /* ── PROGRESS ── */
+    #progressContainer {
+      display: none;
+      position: absolute;
+      bottom: 1rem;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 260px;
+      background: var(--black);
+      border: 1px solid var(--white);
+      padding: .75rem 1rem;
+      z-index: 10;
+    }
+
+    .prog-label {
+      font-size: .62rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--grey);
+      margin-bottom: .45rem;
+    }
+
+    .prog-track { height: 2px; background: var(--mid); width: 100%; }
+
+    #progressBar {
+      height: 100%;
+      width: 0%;
+      background: var(--white);
+      transition: width .2s;
+    }
+
+    #progressText {
+      font-size: .58rem;
+      color: var(--grey);
+      margin-top: .35rem;
+      letter-spacing: .06em;
+    }
+
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--black); }
+    ::-webkit-scrollbar-thumb { background: var(--mid); }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Tickets <span>/ générateur PDF</span></div>
+  <div class="header-hints">
+    <div class="header-hint rect">Cartes — ratio 16:9</div>
+    <div class="header-hint sq">Tickets logo — ratio 1:1</div>
+  </div>
+</header>
+
+<div class="app">
+
+  <!-- LEFT: uploads + sliders -->
+  <div class="panel">
+    <div class="panel-title">Fichiers</div>
+    <div class="panel-body">
+
+      <!-- CARTES -->
+      <div class="section-label">Cartes rectangulaires</div>
+
+      <div class="upload-block">
+        <div class="upload-label">Overlay</div>
+        <div class="ratio-tag">16:9 · <strong>ex. 1920×1080</strong></div>
+        <label class="file-btn" id="labelOverlay">
+          Choisir un fichier
+          <input type="file" id="uploadOverlay" accept="image/*">
+        </label>
+      </div>
+
+      <div class="upload-block">
+        <div class="upload-label">Image de fond</div>
+        <div class="ratio-tag">16:9 · <strong>ex. 1920×1080</strong></div>
+        <label class="file-btn" id="labelUpload">
+          Choisir un fichier
+          <input type="file" id="upload" accept="image/*">
+        </label>
+      </div>
+
+      <div class="slider-block">
+        <div class="slider-row"><span>Zoom</span><span class="slider-val" id="valZoom">1.00</span></div>
+        <input type="range" id="zoom" min="0.1" max="2" step="0.01" value="1">
+      </div>
+      <div class="slider-block">
+        <div class="slider-row"><span>Offset X</span><span class="slider-val" id="valX">0</span></div>
+        <input type="range" id="offsetX" min="-500" max="500" step="1" value="0">
+      </div>
+      <div class="slider-block">
+        <div class="slider-row"><span>Offset Y</span><span class="slider-val" id="valY">0</span></div>
+        <input type="range" id="offsetY" min="-500" max="500" step="1" value="0">
+      </div>
+
+      <hr class="divider">
+
+      <!-- TICKETS LOGO -->
+      <div class="section-label">Tickets logo carré</div>
+
+      <div class="upload-block">
+        <div class="upload-label">Logo</div>
+        <div class="ratio-tag">1:1 · <strong>ex. 500×500</strong></div>
+        <label class="file-btn" id="labelLogo">
+          Choisir un fichier
+          <input type="file" id="uploadLogo" accept="image/*">
+        </label>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- CENTER: canvas avec onglets -->
+  <div class="canvas-panel">
+
+    <div class="canvas-tabs">
+      <button class="tab-btn active" id="tabCarte" onclick="switchTab('carte')">Cartes 16:9</button>
+      <button class="tab-btn" id="tabLogo"  onclick="switchTab('logo')">Tickets logo 1:1</button>
+    </div>
+
+    <div class="canvas-wrap active" id="wrapCarte">
+      <canvas id="canvas" width="607" height="343"></canvas>
+      <div class="canvas-meta" id="canvasMeta">En attente d'une image…</div>
+    </div>
+
+    <div class="canvas-wrap" id="wrapLogo">
+      <canvas id="canvasLogo" width="300" height="300"></canvas>
+      <div class="canvas-meta" id="canvasLogoMeta">En attente du logo…</div>
+    </div>
+
+    <div id="progressContainer">
+      <div class="prog-label">Génération en cours</div>
+      <div class="prog-track"><div id="progressBar"></div></div>
+      <div id="progressText">0%</div>
+    </div>
+  </div>
+
+  <!-- RIGHT: actions séparées -->
+  <div class="panel actions-panel">
+    <div class="panel-title">Exporter</div>
+
+    <!-- Section cartes -->
+    <div class="export-section">
+      <div class="export-section-title">Cartes</div>
+      <button class="action-btn" id="download">
+        <span class="badge">Rendu unique</span>
+        PNG
+      </button>
+      <button class="action-btn" id="downloadPDF">
+        <span class="badge">Grille 2 col · 10 cartes</span>
+        Cartes PDF
+      </button>
+      <button class="action-btn primary" id="downloadPDF50">
+        <span class="badge">Grille 5×10 · 50 cartes</span>
+        Cartes PDF ×50
+      </button>
+    </div>
+
+    <!-- Section tickets logo -->
+    <div class="export-section">
+      <div class="export-section-title">Tickets logo</div>
+      <button class="action-btn primary" id="downloadLogoGrid">
+        <span class="badge">Grille 5×10 · 50 tickets</span>
+        Tickets PDF ×50
+      </button>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+  // ── CARTES ──
+  const canvas = document.getElementById("canvas");
+  const ctx = canvas.getContext("2d");
+  let overlayImg = null, userImg = null;
+  let baseWidth = 607, baseHeight = 343;
+  let zoom = 1, offsetX = 0, offsetY = 0;
+
+  function redraw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    if (userImg) {
+      const r = userImg.width / userImg.height;
+      let dw = baseWidth * zoom, dh = dw / r;
+      if (dh < baseHeight * zoom) { dh = baseHeight * zoom; dw = dh * r; }
+      ctx.drawImage(userImg, (baseWidth - dw) / 2 + offsetX, (baseHeight - dh) / 2 + offsetY, dw, dh);
+    }
+    if (overlayImg) ctx.drawImage(overlayImg, 0, 0, canvas.width, canvas.height);
+    document.getElementById("canvasMeta").textContent = `${canvas.width} × ${canvas.height} px`;
+  }
+
+  document.getElementById("uploadOverlay").addEventListener("change", (e) => {
+    const file = e.target.files[0]; if (!file) return;
+    const img = new Image();
+    img.onload = () => {
+      overlayImg = img;
+      baseWidth = img.width; baseHeight = img.height;
+      canvas.width = baseWidth; canvas.height = baseHeight;
+      redraw();
+    };
+    img.src = URL.createObjectURL(file);
+    markLoaded("labelOverlay", file.name);
+  });
+
+  document.getElementById("upload").addEventListener("change", (e) => {
+    const file = e.target.files[0]; if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const img = new Image();
+      img.onload = () => { userImg = img; redraw(); };
+      img.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+    markLoaded("labelUpload", file.name);
+  });
+
+  document.getElementById("zoom").addEventListener("input", e => {
+    zoom = parseFloat(e.target.value);
+    document.getElementById("valZoom").textContent = zoom.toFixed(2); redraw();
+  });
+  document.getElementById("offsetX").addEventListener("input", e => {
+    offsetX = parseInt(e.target.value);
+    document.getElementById("valX").textContent = offsetX; redraw();
+  });
+  document.getElementById("offsetY").addEventListener("input", e => {
+    offsetY = parseInt(e.target.value);
+    document.getElementById("valY").textContent = offsetY; redraw();
+  });
+
+  // ── LOGO ──
+  const canvasLogo = document.getElementById("canvasLogo");
+  const ctxLogo = canvasLogo.getContext("2d");
+  let logoImg = null;
+
+  document.getElementById("uploadLogo").addEventListener("change", (e) => {
+    const file = e.target.files[0]; if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const img = new Image();
+      img.onload = () => {
+        logoImg = img;
+        // On adapte le canvas au ratio réel (carré forcé en preview)
+        canvasLogo.width = 300; canvasLogo.height = 300;
+        ctxLogo.clearRect(0, 0, 300, 300);
+        // Centrer dans le carré
+        const s = Math.min(300 / img.width, 300 / img.height);
+        const dw = img.width * s, dh = img.height * s;
+        ctxLogo.drawImage(img, (300 - dw) / 2, (300 - dh) / 2, dw, dh);
+        document.getElementById("canvasLogoMeta").textContent = `${img.width} × ${img.height} px`;
+        switchTab('logo');
+      };
+      img.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+    markLoaded("labelLogo", file.name);
+  });
+
+  // ── ONGLETS ──
+  function switchTab(tab) {
+    document.getElementById("wrapCarte").classList.toggle("active", tab === "carte");
+    document.getElementById("wrapLogo").classList.toggle("active",  tab === "logo");
+    document.getElementById("tabCarte").classList.toggle("active",  tab === "carte");
+    document.getElementById("tabLogo").classList.toggle("active",   tab === "logo");
+  }
+
+  // ── HELPERS ──
+  function markLoaded(id, name) {
+    const el = document.getElementById(id);
+    el.classList.add("loaded");
+    el.childNodes[0].textContent = "✓ " + (name.length > 18 ? name.slice(0, 16) + "…" : name) + " ";
+  }
+
+  function showProgress() {
+    document.getElementById("progressContainer").style.display = "block";
+  }
+  function hideProgress() {
+    document.getElementById("progressContainer").style.display = "none";
+  }
+  function setProgress(pct, label) {
+    document.getElementById("progressBar").style.width = pct + "%";
+    document.getElementById("progressText").textContent = label;
+  }
+
+  // ── EXPORT CARTES PNG ──
+  document.getElementById("download").addEventListener("click", () => {
+    const a = document.createElement("a");
+    a.download = "rendu.png";
+    a.href = canvas.toDataURL("image/png");
+    a.click();
+  });
+
+  // ── EXPORT CARTES PDF 2 col ──
+  document.getElementById("downloadPDF").addEventListener("click", () => {
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF("p", "mm", "a4");
+    const imgData = canvas.toDataURL("image/png");
+    const cw = 75, ch = 45;
+    let x = 10, y = 10, col = 0, row = 0;
+    for (let i = 0; i < 10; i++) {
+      pdf.addImage(imgData, "PNG", x, y, cw, ch);
+      col++;
+      if (col === 2) { col = 0; row++; x = 10; y = 10 + row * (ch + 10); }
+      else x = 110;
+    }
+    pdf.save("cartes.pdf");
+  });
+
+  // ── EXPORT CARTES PDF 5×10 ──
+  document.getElementById("downloadPDF50").addEventListener("click", async () => {
+    const { jsPDF } = window.jspdf;
+    if (!userImg) { alert("Veuillez d'abord uploader une image de fond."); return; }
+    const btn = document.getElementById("downloadPDF50");
+    btn.disabled = true; showProgress();
+    try {
+      const pdf = new jsPDF("p", "mm", "a4");
+      const cols = 5, rows = 10, mX = 10, mY = 10, gX = 2, gY = 2;
+      const cw = (210 - 2*mX - (cols-1)*gX) / cols;
+      const ch = (297 - 2*mY - (rows-1)*gY) / rows;
+
+      const off = document.createElement("canvas");
+      off.width = canvas.width; off.height = canvas.height;
+      const oc = off.getContext("2d");
+      if (userImg) {
+        const r = userImg.width / userImg.height;
+        let dw = off.width * zoom, dh = dw / r;
+        if (dh < off.height * zoom) { dh = off.height * zoom; dw = dh * r; }
+        oc.drawImage(userImg, (off.width-dw)/2+offsetX, (off.height-dh)/2+offsetY, dw, dh);
+      }
+      if (overlayImg) oc.drawImage(overlayImg, 0, 0, off.width, off.height);
+      const composite = off.toDataURL("image/png");
+      const ratio = off.width / off.height;
+
+      let processed = 0; const total = rows * cols;
+      for (let row = 0; row < rows; row++) {
+        for (let col = 0; col < cols; col++) {
+          const xCell = mX + col*(cw+gX), yCell = mY + row*(ch+gY);
+          let dw = cw, dh = cw/ratio;
+          if (dh > ch) { dh = ch; dw = dh*ratio; }
+          pdf.addImage(composite, "PNG", xCell+(cw-dw)/2, yCell+(ch-dh)/2, dw, dh);
+          processed++;
+          setProgress(Math.round(processed/total*100), `${Math.round(processed/total*100)}% — ${processed}/${total}`);
+          if (processed % 5 === 0) await new Promise(r => setTimeout(r, 10));
+        }
+      }
+      setProgress(100, "Finalisation…");
+      await new Promise(r => setTimeout(r, 100));
+      pdf.save("cartes-5x10.pdf");
+      setProgress(100, "✓ Téléchargé");
+      await new Promise(r => setTimeout(r, 1200));
+    } catch(err) {
+      console.error(err);
+      setProgress(0, "❌ Erreur");
+      await new Promise(r => setTimeout(r, 2000));
+    }
+    hideProgress(); btn.disabled = false;
+  });
+
+  // ── EXPORT TICKETS LOGO 5×10 ──
+  document.getElementById("downloadLogoGrid").addEventListener("click", async () => {
+    const { jsPDF } = window.jspdf;
+    if (!logoImg) { alert("Veuillez d'abord uploader le logo."); return; }
+    const btn = document.getElementById("downloadLogoGrid");
+    btn.disabled = true; showProgress();
+    try {
+      const pdf = new jsPDF("p", "mm", "a4");
+      const cols = 5, rows = 10, mX = 10, mY = 10, gX = 3, gY = 3;
+      // Cellules carrées
+      const cellSize = Math.min(
+        (210 - 2*mX - (cols-1)*gX) / cols,
+        (297 - 2*mY - (rows-1)*gY) / rows
+      );
+
+      // Canvas off-screen carré
+      const size = Math.max(logoImg.width, logoImg.height);
+      const off = document.createElement("canvas");
+      off.width = size; off.height = size;
+      const oc = off.getContext("2d");
+      const s = Math.min(size / logoImg.width, size / logoImg.height);
+      const dw = logoImg.width * s, dh = logoImg.height * s;
+      oc.drawImage(logoImg, (size - dw) / 2, (size - dh) / 2, dw, dh);
+      const logoData = off.toDataURL("image/png");
+
+      let processed = 0; const total = rows * cols;
+      for (let row = 0; row < rows; row++) {
+        for (let col = 0; col < cols; col++) {
+          const x = mX + col * (cellSize + gX);
+          const y = mY + row * (cellSize + gY);
+          pdf.addImage(logoData, "PNG", x, y, cellSize, cellSize);
+          processed++;
+          setProgress(Math.round(processed/total*100), `${Math.round(processed/total*100)}% — ${processed}/${total}`);
+          if (processed % 5 === 0) await new Promise(r => setTimeout(r, 10));
+        }
+      }
+      setProgress(100, "Finalisation…");
+      await new Promise(r => setTimeout(r, 100));
+      pdf.save("tickets-logo-5x10.pdf");
+      setProgress(100, "✓ Téléchargé");
+      await new Promise(r => setTimeout(r, 1200));
+    } catch(err) {
+      console.error(err);
+      setProgress(0, "❌ Erreur");
+      await new Promise(r => setTimeout(r, 2000));
+    }
+    hideProgress(); btn.disabled = false;
+  });
+</script>
+</body>
+</html>
