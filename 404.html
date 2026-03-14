@@ -50,7 +50,6 @@
       animation: slideUp .55s ease forwards .15s;
     }
 
-    /* top bar */
     .card-header {
       border-bottom: 1px solid var(--line);
       padding: .6rem 1.2rem;
@@ -66,17 +65,9 @@
       color: var(--grey);
     }
 
-    .card-header-dots {
-      display: flex;
-      gap: .4rem;
-    }
+    .card-header-dots { display: flex; gap: .4rem; }
+    .dot { width: 7px; height: 7px; border: 1px solid var(--mid); }
 
-    .dot {
-      width: 7px; height: 7px;
-      border: 1px solid var(--mid);
-    }
-
-    /* body */
     .card-body {
       padding: 2rem 1.8rem 1.6rem;
       display: flex;
@@ -89,14 +80,12 @@
       font-size: 7rem;
       letter-spacing: .06em;
       line-height: 1;
-      color: var(--white);
     }
 
     .error-title {
       font-family: 'Bebas Neue', sans-serif;
       font-size: 1.6rem;
       letter-spacing: .12em;
-      color: var(--white);
     }
 
     .error-message {
@@ -106,13 +95,8 @@
       line-height: 1.6;
     }
 
-    /* divider */
-    .divider {
-      border: none;
-      border-top: 1px solid var(--line);
-    }
+    .divider { border: none; border-top: 1px solid var(--line); }
 
-    /* countdown */
     .redirect-row {
       display: flex;
       align-items: center;
@@ -126,17 +110,12 @@
       color: var(--grey);
     }
 
-    .countdown-wrap {
-      display: flex;
-      align-items: center;
-      gap: .6rem;
-    }
+    .countdown-wrap { display: flex; align-items: center; gap: .6rem; }
 
     .countdown {
       font-family: 'Bebas Neue', sans-serif;
       font-size: 2rem;
       letter-spacing: .08em;
-      color: var(--white);
       min-width: 1.5rem;
       text-align: right;
     }
@@ -145,21 +124,23 @@
       width: 80px;
       height: 2px;
       background: var(--mid);
+      overflow: hidden;
     }
 
+    /* Animation CSS pure sur 5s — transform-origin left, scaleX 1→0 */
     .progress-bar {
       height: 100%;
       background: var(--white);
-      width: 100%;
-      transition: width 1s linear;
+      transform-origin: left center;
+      animation: shrink 5s linear forwards;
     }
 
-    /* buttons */
-    .btn-row {
-      display: flex;
-      gap: .7rem;
-      flex-wrap: wrap;
+    @keyframes shrink {
+      from { transform: scaleX(1); }
+      to   { transform: scaleX(0); }
     }
+
+    .btn-row { display: flex; gap: .7rem; flex-wrap: wrap; }
 
     .btn {
       font-family: 'Bebas Neue', sans-serif;
@@ -174,30 +155,13 @@
       border-radius: 2px;
     }
 
-    .btn-primary {
-      background: var(--white);
-      color: var(--black);
-      border-color: var(--white);
-    }
-
+    .btn-primary { background: var(--white); color: var(--black); border-color: var(--white); }
     .btn-primary:hover { background: #ddd; }
-
-    .btn-secondary {
-      background: transparent;
-      color: var(--grey);
-      border-color: var(--line);
-    }
-
+    .btn-secondary { background: transparent; color: var(--grey); border-color: var(--line); }
     .btn-secondary:hover { border-color: var(--white); color: var(--white); }
 
-    /* animations */
-    @keyframes fadeIn {
-      to { opacity: 1; }
-    }
-
-    @keyframes slideUp {
-      to { opacity: 1; transform: translateY(0); }
-    }
+    @keyframes fadeIn { to { opacity: 1; } }
+    @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
 
     @media (max-width: 480px) {
       .error-code { font-size: 5rem; }
@@ -208,15 +172,13 @@
 </head>
 <body>
 
-  <img src="https://content.stucom.tech/guindaille/td-tickets/logo.png" alt="Logo Bron" class="logo">
+  <img src="https://content.stucom.tech/guindaille/td-tickets/logo.png" alt="Logo" class="logo">
 
   <div class="card">
     <div class="card-header">
       <span class="card-header-label">Erreur système</span>
       <div class="card-header-dots">
-        <div class="dot"></div>
-        <div class="dot"></div>
-        <div class="dot"></div>
+        <div class="dot"></div><div class="dot"></div><div class="dot"></div>
       </div>
     </div>
 
@@ -230,7 +192,9 @@
       <div class="redirect-row">
         <span class="redirect-label">Redirection automatique</span>
         <div class="countdown-wrap">
-          <div class="progress-track"><div class="progress-bar" id="progressBar"></div></div>
+          <div class="progress-track">
+            <div class="progress-bar" id="progressBar"></div>
+          </div>
           <div class="countdown" id="countdown">5</div>
         </div>
       </div>
@@ -239,7 +203,7 @@
 
       <div class="btn-row">
         <a href="/" class="btn btn-primary" id="btnHome">Accueil</a>
-        <button onclick="history.back()" class="btn btn-secondary">← Page précédente</button>
+        <button id="btnBack" class="btn btn-secondary">← Page précédente</button>
       </div>
     </div>
   </div>
@@ -249,23 +213,28 @@
     const countdownEl = document.getElementById('countdown');
     const progressBar = document.getElementById('progressBar');
 
-    // Déclenche la transition CSS immédiatement
-    requestAnimationFrame(() => {
-      progressBar.style.width = '0%';
-    });
-
     const timer = setInterval(() => {
       timeLeft--;
       countdownEl.textContent = timeLeft;
-      progressBar.style.width = (timeLeft / 5 * 100) + '%';
       if (timeLeft <= 0) {
         clearInterval(timer);
         window.location.href = '/';
       }
     }, 1000);
 
-    document.getElementById('btnHome').addEventListener('click', () => clearInterval(timer));
-    document.querySelector('.btn-secondary').addEventListener('click', () => clearInterval(timer));
+    function cancelTimer() {
+      clearInterval(timer);
+      // Fige la barre à sa position actuelle
+      const transform = getComputedStyle(progressBar).transform;
+      progressBar.style.animation = 'none';
+      progressBar.style.transform = transform;
+    }
+
+    document.getElementById('btnHome').addEventListener('click', cancelTimer);
+    document.getElementById('btnBack').addEventListener('click', () => {
+      cancelTimer();
+      history.back();
+    });
   </script>
 
 </body>
