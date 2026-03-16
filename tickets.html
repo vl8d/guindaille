@@ -2,15 +2,13 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>TD Tickets</title>
-    <link rel="icon" type="image/png" href="https://content.stucom.tech/guindaille/td-tickets/logo.png">
+  <title>Tickets</title>
   <script src="jspdf.umd.min.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Bebas+Neue&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
       --black: #0a0a0a;
       --white: #f5f5f0;
@@ -18,9 +16,7 @@
       --mid: #2a2a2a;
       --line: #2a2a2a;
     }
-
     html, body { height: 100%; overflow: hidden; }
-
     body {
       font-family: 'DM Mono', monospace;
       background: var(--black);
@@ -29,8 +25,6 @@
       grid-template-rows: auto 1fr;
       height: 100vh;
     }
-
-    /* ── HEADER ── */
     header {
       display: flex;
       align-items: center;
@@ -38,13 +32,11 @@
       padding: .55rem 1.5rem;
       border-bottom: 1px solid var(--line);
     }
-
     .logo {
       font-family: 'Bebas Neue', sans-serif;
       font-size: 1.5rem;
       letter-spacing: .12em;
     }
-
     .logo span {
       color: var(--grey);
       font-size: .85rem;
@@ -53,12 +45,7 @@
       font-family: 'DM Mono', monospace;
       font-weight: 400;
     }
-
-    .header-hints {
-      display: flex;
-      gap: 1.5rem;
-    }
-
+    .header-hints { display: flex; gap: 1.5rem; }
     .header-hint {
       font-size: .6rem;
       color: var(--grey);
@@ -68,36 +55,27 @@
       align-items: center;
       gap: .4rem;
     }
-
     .header-hint::before {
       content: '';
       display: inline-block;
-      width: 6px;
-      height: 6px;
+      width: 6px; height: 6px;
       border: 1px solid var(--grey);
     }
-
     .header-hint.rect::before { border-radius: 0; aspect-ratio: 16/9; width: 10px; height: 6px; }
     .header-hint.sq::before   { border-radius: 0; width: 6px; height: 6px; }
-
-    /* ── MAIN GRID ── */
     .app {
       display: grid;
       grid-template-columns: 250px 1fr 190px;
       height: 100%;
       overflow: hidden;
     }
-
-    /* ── PANELS ── */
     .panel {
       border-right: 1px solid var(--line);
       display: flex;
       flex-direction: column;
       overflow: hidden;
     }
-
     .panel:last-child { border-right: none; }
-
     .panel-title {
       font-family: 'Bebas Neue', sans-serif;
       font-size: .95rem;
@@ -107,7 +85,6 @@
       border-bottom: 1px solid var(--line);
       text-transform: uppercase;
     }
-
     .panel-body {
       flex: 1;
       padding: .85rem 1.2rem;
@@ -116,8 +93,6 @@
       gap: .75rem;
       overflow-y: auto;
     }
-
-    /* ── SECTION LABELS ── */
     .section-label {
       font-size: .6rem;
       letter-spacing: .12em;
@@ -127,17 +102,13 @@
       padding-bottom: .35rem;
       margin-top: .2rem;
     }
-
-    /* ── UPLOAD BLOCKS ── */
     .upload-block { display: flex; flex-direction: column; gap: .35rem; }
-
     .upload-label {
       font-size: .6rem;
       letter-spacing: .1em;
       text-transform: uppercase;
       color: var(--grey);
     }
-
     .ratio-tag {
       display: inline-flex;
       align-items: center;
@@ -150,9 +121,7 @@
       padding: .12rem .45rem;
       width: fit-content;
     }
-
     .ratio-tag strong { color: var(--white); }
-
     .file-btn {
       position: relative;
       overflow: hidden;
@@ -169,13 +138,10 @@
       cursor: pointer;
       transition: border-color .15s, color .15s;
       white-space: nowrap;
-      overflow: hidden;
       text-overflow: ellipsis;
     }
-
     .file-btn:hover { border-color: var(--white); color: var(--white); }
     .file-btn.loaded { border-color: var(--white); color: var(--white); }
-
     .file-btn input[type="file"] {
       position: absolute;
       inset: 0;
@@ -184,13 +150,8 @@
       width: 100%;
       height: 100%;
     }
-
-    /* ── DIVIDER ── */
     .divider { border: none; border-top: 1px solid var(--line); margin: .1rem 0; }
-
-    /* ── SLIDERS ── */
     .slider-block { display: flex; flex-direction: column; gap: .28rem; }
-
     .slider-row {
       display: flex;
       justify-content: space-between;
@@ -200,34 +161,24 @@
       text-transform: uppercase;
       color: var(--grey);
     }
-
     .slider-val { color: var(--white); min-width: 2.5rem; text-align: right; }
-
     input[type="range"] {
       -webkit-appearance: none;
-      width: 100%;
-      height: 2px;
+      width: 100%; height: 2px;
       background: var(--line);
-      outline: none;
-      border-radius: 0;
+      outline: none; border-radius: 0;
     }
-
     input[type="range"]::-webkit-slider-thumb {
       -webkit-appearance: none;
       width: 11px; height: 11px;
       background: var(--white);
-      border-radius: 0;
-      cursor: pointer;
+      border-radius: 0; cursor: pointer;
     }
-
     input[type="range"]::-moz-range-thumb {
       width: 11px; height: 11px;
       background: var(--white);
-      border-radius: 0; border: none;
-      cursor: pointer;
+      border-radius: 0; border: none; cursor: pointer;
     }
-
-    /* ── CANVAS AREA ── */
     .canvas-panel {
       display: flex;
       flex-direction: column;
@@ -238,8 +189,6 @@
       background: #111;
       position: relative;
     }
-
-    /* Tab switcher */
     .canvas-tabs {
       display: flex;
       gap: 0;
@@ -248,7 +197,6 @@
       overflow: hidden;
       align-self: flex-start;
     }
-
     .tab-btn {
       background: var(--black);
       border: none;
@@ -263,41 +211,31 @@
       border-right: 1px solid var(--line);
       flex: 1 1 auto;
     }
-
     .tab-btn:last-child { border-right: none; }
     .tab-btn.active { background: var(--white); color: var(--black); }
-
     .canvas-wrap { display: none; flex-direction: column; align-items: center; gap: .5rem; }
     .canvas-wrap.active { display: flex; }
-
     canvas {
       max-width: 100%;
       border: 1px solid var(--line);
       display: block;
       background: var(--mid);
     }
-
-    #canvas       { max-height: calc(100vh - 160px); }
-    #canvasLogo   { max-height: calc(100vh - 160px); max-width: 260px; }
-
+    #canvas     { max-height: calc(100vh - 160px); }
+    #canvasLogo { max-height: calc(100vh - 160px); max-width: 260px; }
     .canvas-meta {
       font-size: .58rem;
       color: var(--grey);
       letter-spacing: .06em;
       text-transform: uppercase;
     }
-
-    /* ── RIGHT PANEL — two sections ── */
     .actions-panel { overflow-y: auto; }
-
     .export-section {
       display: flex;
       flex-direction: column;
       border-bottom: 2px solid var(--white);
     }
-
     .export-section:last-child { border-bottom: none; }
-
     .export-section-title {
       font-family: 'Bebas Neue', sans-serif;
       font-size: .85rem;
@@ -307,7 +245,6 @@
       border-bottom: 1px solid var(--line);
       text-transform: uppercase;
     }
-
     .action-btn {
       display: flex;
       flex-direction: column;
@@ -325,11 +262,9 @@
       text-align: left;
       transition: background .15s;
     }
-
     .action-btn:last-child { border-bottom: none; }
     .action-btn:hover { background: var(--mid); }
     .action-btn:disabled { opacity: .3; cursor: not-allowed; }
-
     .action-btn .badge {
       font-family: 'DM Mono', monospace;
       font-size: .52rem;
@@ -338,12 +273,9 @@
       text-transform: uppercase;
       margin-bottom: .25rem;
     }
-
     .action-btn.primary { background: var(--white); color: var(--black); }
     .action-btn.primary:hover { background: #ddd; }
     .action-btn.primary .badge { color: #666; }
-
-    /* ── PROGRESS ── */
     #progressContainer {
       display: none;
       position: absolute;
@@ -356,7 +288,6 @@
       padding: .75rem 1rem;
       z-index: 10;
     }
-
     .prog-label {
       font-size: .62rem;
       letter-spacing: .1em;
@@ -364,30 +295,15 @@
       color: var(--grey);
       margin-bottom: .45rem;
     }
-
     .prog-track { height: 2px; background: var(--mid); width: 100%; }
-
-    #progressBar {
-      height: 100%;
-      width: 0%;
-      background: var(--white);
-      transition: width .2s;
-    }
-
-    #progressText {
-      font-size: .58rem;
-      color: var(--grey);
-      margin-top: .35rem;
-      letter-spacing: .06em;
-    }
-
+    #progressBar { height: 100%; width: 0%; background: var(--white); transition: width .2s; }
+    #progressText { font-size: .58rem; color: var(--grey); margin-top: .35rem; letter-spacing: .06em; }
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-track { background: var(--black); }
     ::-webkit-scrollbar-thumb { background: var(--mid); }
   </style>
 </head>
 <body>
-
 <header>
   <div class="logo">Tickets <span>/ générateur PDF</span></div>
   <div class="header-hints">
@@ -395,17 +311,12 @@
     <div class="header-hint sq">Tickets logo — ratio 1:1</div>
   </div>
 </header>
-
 <div class="app">
-
-  <!-- LEFT: uploads + sliders -->
+  <!-- LEFT -->
   <div class="panel">
     <div class="panel-title">Fichiers</div>
     <div class="panel-body">
-
-      <!-- CARTES -->
       <div class="section-label">Cartes rectangulaires</div>
-
       <div class="upload-block">
         <div class="upload-label">Overlay</div>
         <div class="ratio-tag">16:9 · <strong>ex. 1920×1080</strong></div>
@@ -414,7 +325,6 @@
           <input type="file" id="uploadOverlay" accept="image/*">
         </label>
       </div>
-
       <div class="upload-block">
         <div class="upload-label">Image de fond</div>
         <div class="ratio-tag">16:9 · <strong>ex. 1920×1080</strong></div>
@@ -423,7 +333,6 @@
           <input type="file" id="upload" accept="image/*">
         </label>
       </div>
-
       <div class="slider-block">
         <div class="slider-row"><span>Zoom</span><span class="slider-val" id="valZoom">1.00</span></div>
         <input type="range" id="zoom" min="0.1" max="2" step="0.01" value="1">
@@ -436,12 +345,8 @@
         <div class="slider-row"><span>Offset Y</span><span class="slider-val" id="valY">0</span></div>
         <input type="range" id="offsetY" min="-500" max="500" step="1" value="0">
       </div>
-
       <hr class="divider">
-
-      <!-- TICKETS LOGO -->
       <div class="section-label">Tickets logo carré</div>
-
       <div class="upload-block">
         <div class="upload-label">Logo</div>
         <div class="ratio-tag">1:1 · <strong>ex. 500×500</strong></div>
@@ -450,28 +355,23 @@
           <input type="file" id="uploadLogo" accept="image/*">
         </label>
       </div>
-
     </div>
   </div>
 
-  <!-- CENTER: canvas avec onglets -->
+  <!-- CENTER -->
   <div class="canvas-panel">
-
     <div class="canvas-tabs">
       <button class="tab-btn active" id="tabCarte" onclick="switchTab('carte')">Cartes 16:9</button>
       <button class="tab-btn" id="tabLogo"  onclick="switchTab('logo')">Tickets logo 1:1</button>
     </div>
-
     <div class="canvas-wrap active" id="wrapCarte">
       <canvas id="canvas" width="607" height="343"></canvas>
       <div class="canvas-meta" id="canvasMeta">En attente d'une image…</div>
     </div>
-
     <div class="canvas-wrap" id="wrapLogo">
       <canvas id="canvasLogo" width="300" height="300"></canvas>
       <div class="canvas-meta" id="canvasLogoMeta">En attente du logo…</div>
     </div>
-
     <div id="progressContainer">
       <div class="prog-label">Génération en cours</div>
       <div class="prog-track"><div id="progressBar"></div></div>
@@ -479,38 +379,28 @@
     </div>
   </div>
 
-  <!-- RIGHT: actions séparées -->
+  <!-- RIGHT -->
   <div class="panel actions-panel">
     <div class="panel-title">Exporter</div>
-
-    <!-- Section cartes -->
     <div class="export-section">
       <div class="export-section-title">Cartes</div>
       <button class="action-btn" id="download">
-        <span class="badge">Rendu unique</span>
-        PNG
+        <span class="badge">Rendu unique</span>PNG
       </button>
       <button class="action-btn" id="downloadPDF">
-        <span class="badge">Grille 2 col · 10 cartes</span>
-        Cartes PDF
+        <span class="badge">Grille 2 col · 10 cartes</span>Cartes PDF
       </button>
       <button class="action-btn primary" id="downloadPDF50">
-        <span class="badge">Grille 5×10 · 50 cartes</span>
-        Cartes PDF ×50
+        <span class="badge">Grille 5×10 · 50 cartes</span>Cartes PDF ×50
       </button>
     </div>
-
-    <!-- Section tickets logo -->
     <div class="export-section">
       <div class="export-section-title">Tickets logo</div>
       <button class="action-btn primary" id="downloadLogoGrid">
-        <span class="badge">Grille 5×10 · 50 tickets</span>
-        Tickets PDF ×50
+        <span class="badge">Grille 5×10 · 50 tickets</span>Tickets PDF ×50
       </button>
     </div>
-
   </div>
-
 </div>
 
 <script>
@@ -583,10 +473,8 @@
       const img = new Image();
       img.onload = () => {
         logoImg = img;
-        // On adapte le canvas au ratio réel (carré forcé en preview)
         canvasLogo.width = 300; canvasLogo.height = 300;
         ctxLogo.clearRect(0, 0, 300, 300);
-        // Centrer dans le carré
         const s = Math.min(300 / img.width, 300 / img.height);
         const dw = img.width * s, dh = img.height * s;
         ctxLogo.drawImage(img, (300 - dw) / 2, (300 - dh) / 2, dw, dh);
@@ -613,19 +501,31 @@
     el.classList.add("loaded");
     el.childNodes[0].textContent = "✓ " + (name.length > 18 ? name.slice(0, 16) + "…" : name) + " ";
   }
-
-  function showProgress() {
-    document.getElementById("progressContainer").style.display = "block";
-  }
-  function hideProgress() {
-    document.getElementById("progressContainer").style.display = "none";
-  }
+  function showProgress() { document.getElementById("progressContainer").style.display = "block"; }
+  function hideProgress() { document.getElementById("progressContainer").style.display = "none"; }
   function setProgress(pct, label) {
     document.getElementById("progressBar").style.width = pct + "%";
     document.getElementById("progressText").textContent = label;
   }
 
-  // ── EXPORT CARTES PNG ──
+  // ── Rendu composite vers canvas off-screen (fond + overlay) ──
+  // Retourne une dataURL à la résolution native de l'overlay/canvas
+  function buildCompositeDataURL() {
+    const w = canvas.width, h = canvas.height;
+    const off = document.createElement("canvas");
+    off.width = w; off.height = h;
+    const oc = off.getContext("2d");
+    if (userImg) {
+      const r = userImg.width / userImg.height;
+      let dw = w * zoom, dh = dw / r;
+      if (dh < h * zoom) { dh = h * zoom; dw = dh * r; }
+      oc.drawImage(userImg, (w - dw) / 2 + offsetX, (h - dh) / 2 + offsetY, dw, dh);
+    }
+    if (overlayImg) oc.drawImage(overlayImg, 0, 0, w, h);
+    return { dataURL: off.toDataURL("image/png"), ratio: w / h };
+  }
+
+  // ── EXPORT PNG ──
   document.getElementById("download").addEventListener("click", () => {
     const a = document.createElement("a");
     a.download = "rendu.png";
@@ -649,38 +549,73 @@
     pdf.save("cartes.pdf");
   });
 
-  // ── EXPORT CARTES PDF 5×10 ──
+  // ── EXPORT CARTES PDF 5×10 ── (corrigé)
   document.getElementById("downloadPDF50").addEventListener("click", async () => {
     const { jsPDF } = window.jspdf;
-    if (!userImg) { alert("Veuillez d'abord uploader une image de fond."); return; }
+    if (!userImg && !overlayImg) { alert("Veuillez d'abord uploader une image."); return; }
     const btn = document.getElementById("downloadPDF50");
     btn.disabled = true; showProgress();
     try {
       const pdf = new jsPDF("p", "mm", "a4");
-      const cols = 5, rows = 10, mX = 10, mY = 10, gX = 2, gY = 2;
-      const cw = (210 - 2*mX - (cols-1)*gX) / cols;
-      const ch = (297 - 2*mY - (rows-1)*gY) / rows;
+      const cols = 5, rows = 10;
+      const mX = 10, mY = 10, gX = 2, gY = 2;
+      const cellW = (210 - 2*mX - (cols-1)*gX) / cols;  // ~36 mm
+      const cellH = (297 - 2*mY - (rows-1)*gY) / rows;  // ~27.7 mm
+
+      // ── Construire l'image composite une seule fois ──
+      // On travaille à une résolution fixe haute qualité (4× la cellule en px à 96 dpi)
+      const PX_PER_MM = 96 / 25.4;
+      const targetW = Math.round(cellW * PX_PER_MM * 4);
+      const targetH = Math.round(cellH * PX_PER_MM * 4);
 
       const off = document.createElement("canvas");
-      off.width = canvas.width; off.height = canvas.height;
+      // On conserve le ratio de l'overlay si dispo, sinon celui de userImg
+      const srcW = overlayImg ? overlayImg.width  : (userImg ? userImg.width  : targetW);
+      const srcH = overlayImg ? overlayImg.height : (userImg ? userImg.height : targetH);
+      const srcRatio = srcW / srcH;
+
+      // Dimensions off-screen : on cherche la taille minimale qui couvre la cellule
+      // en respectant le ratio source, sans upscale inutile
+      let offW, offH;
+      if (srcRatio >= cellW / cellH) {
+        offH = srcH; offW = offH * srcRatio;
+      } else {
+        offW = srcW; offH = offW / srcRatio;
+      }
+      // On plafonne à la résolution source pour éviter l'upscaling
+      offW = Math.min(offW, srcW * 2);
+      offH = Math.min(offH, srcH * 2);
+
+      off.width  = Math.round(offW);
+      off.height = Math.round(offH);
       const oc = off.getContext("2d");
+
       if (userImg) {
         const r = userImg.width / userImg.height;
         let dw = off.width * zoom, dh = dw / r;
         if (dh < off.height * zoom) { dh = off.height * zoom; dw = dh * r; }
-        oc.drawImage(userImg, (off.width-dw)/2+offsetX, (off.height-dh)/2+offsetY, dw, dh);
+        oc.drawImage(userImg, (off.width - dw) / 2 + offsetX, (off.height - dh) / 2 + offsetY, dw, dh);
       }
       if (overlayImg) oc.drawImage(overlayImg, 0, 0, off.width, off.height);
+
       const composite = off.toDataURL("image/png");
-      const ratio = off.width / off.height;
+      const imgRatio  = off.width / off.height;
 
       let processed = 0; const total = rows * cols;
       for (let row = 0; row < rows; row++) {
         for (let col = 0; col < cols; col++) {
-          const xCell = mX + col*(cw+gX), yCell = mY + row*(ch+gY);
-          let dw = cw, dh = cw/ratio;
-          if (dh > ch) { dh = ch; dw = dh*ratio; }
-          pdf.addImage(composite, "PNG", xCell+(cw-dw)/2, yCell+(ch-dh)/2, dw, dh);
+          const xCell = mX + col * (cellW + gX);
+          const yCell = mY + row * (cellH + gY);
+
+          // Ajustement pour conserver le ratio dans la cellule (cover → on utilise contain)
+          let dw = cellW, dh = cellW / imgRatio;
+          if (dh > cellH) { dh = cellH; dw = dh * imgRatio; }
+
+          // Centrage dans la cellule
+          const dx = xCell + (cellW - dw) / 2;
+          const dy = yCell + (cellH - dh) / 2;
+
+          pdf.addImage(composite, "PNG", dx, dy, dw, dh);
           processed++;
           setProgress(Math.round(processed/total*100), `${Math.round(processed/total*100)}% — ${processed}/${total}`);
           if (processed % 5 === 0) await new Promise(r => setTimeout(r, 10));
@@ -699,7 +634,7 @@
     hideProgress(); btn.disabled = false;
   });
 
-  // ── EXPORT TICKETS LOGO 5×10 ──
+  // ── EXPORT TICKETS LOGO 5×10 ── (corrigé)
   document.getElementById("downloadLogoGrid").addEventListener("click", async () => {
     const { jsPDF } = window.jspdf;
     if (!logoImg) { alert("Veuillez d'abord uploader le logo."); return; }
@@ -709,13 +644,10 @@
       const pdf = new jsPDF("p", "mm", "a4");
       const cols = 5, rows = 10;
       const mX = 10, mY = 10;
-      // Cellule carrée basée sur toute la largeur utile
       const cellSize = (210 - 2 * mX) / cols;
-      // Gap vertical calculé pour que les 10 lignes remplissent toute la hauteur
       const gY = ((297 - 2 * mY) - rows * cellSize) / (rows - 1);
-      const gX = 0;
 
-      // Canvas off-screen carré
+      // Canvas off-screen carré à la résolution native du logo
       const size = Math.max(logoImg.width, logoImg.height);
       const off = document.createElement("canvas");
       off.width = size; off.height = size;
@@ -728,7 +660,7 @@
       let processed = 0; const total = rows * cols;
       for (let row = 0; row < rows; row++) {
         for (let col = 0; col < cols; col++) {
-          const x = mX + col * (cellSize + gX);
+          const x = mX + col * cellSize;
           const y = mY + row * (cellSize + gY);
           pdf.addImage(logoData, "PNG", x, y, cellSize, cellSize);
           processed++;
