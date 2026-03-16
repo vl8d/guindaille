@@ -2,8 +2,9 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Tickets</title>
+  <title>TD Tickets</title>
   <script src="jspdf.umd.min.js"></script>
+  <link rel="icon" href="https://content.stucom.tech/guindaille/td-tickets/logo.png" type="image/png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Bebas+Neue&display=swap" rel="stylesheet">
@@ -32,269 +33,59 @@
       padding: .55rem 1.5rem;
       border-bottom: 1px solid var(--line);
     }
-    .logo {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 1.5rem;
-      letter-spacing: .12em;
-    }
-    .logo span {
-      color: var(--grey);
-      font-size: .85rem;
-      letter-spacing: .05em;
-      margin-left: .7rem;
-      font-family: 'DM Mono', monospace;
-      font-weight: 400;
-    }
+    .logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; letter-spacing: .12em; }
+    .logo span { color: var(--grey); font-size: .85rem; letter-spacing: .05em; margin-left: .7rem; font-family: 'DM Mono', monospace; font-weight: 400; }
     .header-hints { display: flex; gap: 1.5rem; }
-    .header-hint {
-      font-size: .6rem;
-      color: var(--grey);
-      letter-spacing: .06em;
-      text-transform: uppercase;
-      display: flex;
-      align-items: center;
-      gap: .4rem;
-    }
-    .header-hint::before {
-      content: '';
-      display: inline-block;
-      width: 6px; height: 6px;
-      border: 1px solid var(--grey);
-    }
+    .header-hint { font-size: .6rem; color: var(--grey); letter-spacing: .06em; text-transform: uppercase; display: flex; align-items: center; gap: .4rem; }
+    .header-hint::before { content: ''; display: inline-block; width: 6px; height: 6px; border: 1px solid var(--grey); }
     .header-hint.rect::before { border-radius: 0; aspect-ratio: 16/9; width: 10px; height: 6px; }
     .header-hint.sq::before   { border-radius: 0; width: 6px; height: 6px; }
-    .app {
-      display: grid;
-      grid-template-columns: 250px 1fr 190px;
-      height: 100%;
-      overflow: hidden;
-    }
-    .panel {
-      border-right: 1px solid var(--line);
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
+    .app { display: grid; grid-template-columns: 250px 1fr 190px; height: 100%; overflow: hidden; }
+    .panel { border-right: 1px solid var(--line); display: flex; flex-direction: column; overflow: hidden; }
     .panel:last-child { border-right: none; }
-    .panel-title {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: .95rem;
-      letter-spacing: .15em;
-      color: var(--grey);
-      padding: .65rem 1.2rem .45rem;
-      border-bottom: 1px solid var(--line);
-      text-transform: uppercase;
-    }
-    .panel-body {
-      flex: 1;
-      padding: .85rem 1.2rem;
-      display: flex;
-      flex-direction: column;
-      gap: .75rem;
-      overflow-y: auto;
-    }
-    .section-label {
-      font-size: .6rem;
-      letter-spacing: .12em;
-      text-transform: uppercase;
-      color: var(--grey);
-      border-bottom: 1px solid var(--line);
-      padding-bottom: .35rem;
-      margin-top: .2rem;
-    }
+    .panel-title { font-family: 'Bebas Neue', sans-serif; font-size: .95rem; letter-spacing: .15em; color: var(--grey); padding: .65rem 1.2rem .45rem; border-bottom: 1px solid var(--line); text-transform: uppercase; }
+    .panel-body { flex: 1; padding: .85rem 1.2rem; display: flex; flex-direction: column; gap: .75rem; overflow-y: auto; }
+    .section-label { font-size: .6rem; letter-spacing: .12em; text-transform: uppercase; color: var(--grey); border-bottom: 1px solid var(--line); padding-bottom: .35rem; margin-top: .2rem; }
     .upload-block { display: flex; flex-direction: column; gap: .35rem; }
-    .upload-label {
-      font-size: .6rem;
-      letter-spacing: .1em;
-      text-transform: uppercase;
-      color: var(--grey);
-    }
-    .ratio-tag {
-      display: inline-flex;
-      align-items: center;
-      gap: .3rem;
-      font-size: .58rem;
-      background: var(--mid);
-      color: var(--grey);
-      border: 1px solid var(--line);
-      border-radius: 2px;
-      padding: .12rem .45rem;
-      width: fit-content;
-    }
+    .upload-label { font-size: .6rem; letter-spacing: .1em; text-transform: uppercase; color: var(--grey); }
+    .ratio-tag { display: inline-flex; align-items: center; gap: .3rem; font-size: .58rem; background: var(--mid); color: var(--grey); border: 1px solid var(--line); border-radius: 2px; padding: .12rem .45rem; width: fit-content; }
     .ratio-tag strong { color: var(--white); }
-    .file-btn {
-      position: relative;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      gap: .6rem;
-      background: var(--mid);
-      border: 1px solid var(--line);
-      border-radius: 3px;
-      padding: .5rem .75rem;
-      font-family: 'DM Mono', monospace;
-      font-size: .7rem;
-      color: var(--grey);
-      cursor: pointer;
-      transition: border-color .15s, color .15s;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-    }
+    .file-btn { position: relative; overflow: hidden; display: flex; align-items: center; gap: .6rem; background: var(--mid); border: 1px solid var(--line); border-radius: 3px; padding: .5rem .75rem; font-family: 'DM Mono', monospace; font-size: .7rem; color: var(--grey); cursor: pointer; transition: border-color .15s, color .15s; white-space: nowrap; text-overflow: ellipsis; }
     .file-btn:hover { border-color: var(--white); color: var(--white); }
     .file-btn.loaded { border-color: var(--white); color: var(--white); }
-    .file-btn input[type="file"] {
-      position: absolute;
-      inset: 0;
-      opacity: 0;
-      cursor: pointer;
-      width: 100%;
-      height: 100%;
-    }
+    .file-btn input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
     .divider { border: none; border-top: 1px solid var(--line); margin: .1rem 0; }
     .slider-block { display: flex; flex-direction: column; gap: .28rem; }
-    .slider-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: .6rem;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      color: var(--grey);
-    }
+    .slider-row { display: flex; justify-content: space-between; align-items: center; font-size: .6rem; letter-spacing: .08em; text-transform: uppercase; color: var(--grey); }
     .slider-val { color: var(--white); min-width: 2.5rem; text-align: right; }
-    input[type="range"] {
-      -webkit-appearance: none;
-      width: 100%; height: 2px;
-      background: var(--line);
-      outline: none; border-radius: 0;
-    }
-    input[type="range"]::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      width: 11px; height: 11px;
-      background: var(--white);
-      border-radius: 0; cursor: pointer;
-    }
-    input[type="range"]::-moz-range-thumb {
-      width: 11px; height: 11px;
-      background: var(--white);
-      border-radius: 0; border: none; cursor: pointer;
-    }
-    .canvas-panel {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 1rem;
-      gap: .6rem;
-      background: #111;
-      position: relative;
-    }
-    .canvas-tabs {
-      display: flex;
-      gap: 0;
-      border: 1px solid var(--line);
-      border-radius: 3px;
-      overflow: hidden;
-      align-self: flex-start;
-    }
-    .tab-btn {
-      background: var(--black);
-      border: none;
-      color: var(--grey);
-      font-family: 'DM Mono', monospace;
-      font-size: .62rem;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      padding: .35rem .9rem;
-      cursor: pointer;
-      transition: background .12s, color .12s;
-      border-right: 1px solid var(--line);
-      flex: 1 1 auto;
-    }
+    input[type="range"] { -webkit-appearance: none; width: 100%; height: 2px; background: var(--line); outline: none; border-radius: 0; }
+    input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 11px; height: 11px; background: var(--white); border-radius: 0; cursor: pointer; }
+    input[type="range"]::-moz-range-thumb { width: 11px; height: 11px; background: var(--white); border-radius: 0; border: none; cursor: pointer; }
+    .canvas-panel { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1rem; gap: .6rem; background: #111; position: relative; }
+    .canvas-tabs { display: flex; gap: 0; border: 1px solid var(--line); border-radius: 3px; overflow: hidden; align-self: flex-start; }
+    .tab-btn { background: var(--black); border: none; color: var(--grey); font-family: 'DM Mono', monospace; font-size: .62rem; letter-spacing: .08em; text-transform: uppercase; padding: .35rem .9rem; cursor: pointer; transition: background .12s, color .12s; border-right: 1px solid var(--line); flex: 1 1 auto; }
     .tab-btn:last-child { border-right: none; }
     .tab-btn.active { background: var(--white); color: var(--black); }
     .canvas-wrap { display: none; flex-direction: column; align-items: center; gap: .5rem; }
     .canvas-wrap.active { display: flex; }
-    canvas {
-      max-width: 100%;
-      border: 1px solid var(--line);
-      display: block;
-      background: var(--mid);
-    }
+    canvas { max-width: 100%; border: 1px solid var(--line); display: block; background: var(--mid); }
     #canvas     { max-height: calc(100vh - 160px); }
     #canvasLogo { max-height: calc(100vh - 160px); max-width: 260px; }
-    .canvas-meta {
-      font-size: .58rem;
-      color: var(--grey);
-      letter-spacing: .06em;
-      text-transform: uppercase;
-    }
+    .canvas-meta { font-size: .58rem; color: var(--grey); letter-spacing: .06em; text-transform: uppercase; }
     .actions-panel { overflow-y: auto; }
-    .export-section {
-      display: flex;
-      flex-direction: column;
-      border-bottom: 2px solid var(--white);
-    }
+    .export-section { display: flex; flex-direction: column; border-bottom: 2px solid var(--white); }
     .export-section:last-child { border-bottom: none; }
-    .export-section-title {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: .85rem;
-      letter-spacing: .15em;
-      color: var(--grey);
-      padding: .5rem 1.1rem .3rem;
-      border-bottom: 1px solid var(--line);
-      text-transform: uppercase;
-    }
-    .action-btn {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      justify-content: flex-end;
-      padding: .75rem 1.1rem .6rem;
-      border: none;
-      border-bottom: 1px solid var(--line);
-      background: var(--black);
-      color: var(--white);
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 1rem;
-      letter-spacing: .12em;
-      cursor: pointer;
-      text-align: left;
-      transition: background .15s;
-    }
+    .export-section-title { font-family: 'Bebas Neue', sans-serif; font-size: .85rem; letter-spacing: .15em; color: var(--grey); padding: .5rem 1.1rem .3rem; border-bottom: 1px solid var(--line); text-transform: uppercase; }
+    .action-btn { display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-end; padding: .75rem 1.1rem .6rem; border: none; border-bottom: 1px solid var(--line); background: var(--black); color: var(--white); font-family: 'Bebas Neue', sans-serif; font-size: 1rem; letter-spacing: .12em; cursor: pointer; text-align: left; transition: background .15s; }
     .action-btn:last-child { border-bottom: none; }
     .action-btn:hover { background: var(--mid); }
     .action-btn:disabled { opacity: .3; cursor: not-allowed; }
-    .action-btn .badge {
-      font-family: 'DM Mono', monospace;
-      font-size: .52rem;
-      letter-spacing: .1em;
-      color: var(--grey);
-      text-transform: uppercase;
-      margin-bottom: .25rem;
-    }
+    .action-btn .badge { font-family: 'DM Mono', monospace; font-size: .52rem; letter-spacing: .1em; color: var(--grey); text-transform: uppercase; margin-bottom: .25rem; }
     .action-btn.primary { background: var(--white); color: var(--black); }
     .action-btn.primary:hover { background: #ddd; }
     .action-btn.primary .badge { color: #666; }
-    #progressContainer {
-      display: none;
-      position: absolute;
-      bottom: 1rem;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 260px;
-      background: var(--black);
-      border: 1px solid var(--white);
-      padding: .75rem 1rem;
-      z-index: 10;
-    }
-    .prog-label {
-      font-size: .62rem;
-      letter-spacing: .1em;
-      text-transform: uppercase;
-      color: var(--grey);
-      margin-bottom: .45rem;
-    }
+    #progressContainer { display: none; position: absolute; bottom: 1rem; left: 50%; transform: translateX(-50%); width: 260px; background: var(--black); border: 1px solid var(--white); padding: .75rem 1rem; z-index: 10; }
+    .prog-label { font-size: .62rem; letter-spacing: .1em; text-transform: uppercase; color: var(--grey); margin-bottom: .45rem; }
     .prog-track { height: 2px; background: var(--mid); width: 100%; }
     #progressBar { height: 100%; width: 0%; background: var(--white); transition: width .2s; }
     #progressText { font-size: .58rem; color: var(--grey); margin-top: .35rem; letter-spacing: .06em; }
@@ -362,7 +153,7 @@
   <div class="canvas-panel">
     <div class="canvas-tabs">
       <button class="tab-btn active" id="tabCarte" onclick="switchTab('carte')">Cartes 16:9</button>
-      <button class="tab-btn" id="tabLogo"  onclick="switchTab('logo')">Tickets logo 1:1</button>
+      <button class="tab-btn" id="tabLogo" onclick="switchTab('logo')">Tickets logo 1:1</button>
     </div>
     <div class="canvas-wrap active" id="wrapCarte">
       <canvas id="canvas" width="607" height="343"></canvas>
@@ -414,19 +205,27 @@
   function redraw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     if (userImg) {
-      const r = userImg.width / userImg.height;
-      let dw = baseWidth * zoom, dh = dw / r;
-      if (dh < baseHeight * zoom) { dh = baseHeight * zoom; dw = dh * r; }
-      ctx.drawImage(userImg, (baseWidth - dw) / 2 + offsetX, (baseHeight - dh) / 2 + offsetY, dw, dh);
+      const imgRatio = userImg.width / userImg.height;
+      let drawWidth = baseWidth * zoom;
+      let drawHeight = drawWidth / imgRatio;
+      if (drawHeight < baseHeight * zoom) {
+        drawHeight = baseHeight * zoom;
+        drawWidth = drawHeight * imgRatio;
+      }
+      ctx.drawImage(userImg,
+        (baseWidth - drawWidth) / 2 + offsetX,
+        (baseHeight - drawHeight) / 2 + offsetY,
+        drawWidth, drawHeight
+      );
     }
     if (overlayImg) ctx.drawImage(overlayImg, 0, 0, canvas.width, canvas.height);
-    document.getElementById("canvasMeta").textContent = `${canvas.width} × ${canvas.height} px`;
+    document.getElementById("canvasMeta").textContent = canvas.width + " × " + canvas.height + " px";
   }
 
-  document.getElementById("uploadOverlay").addEventListener("change", (e) => {
+  document.getElementById("uploadOverlay").addEventListener("change", function(e) {
     const file = e.target.files[0]; if (!file) return;
     const img = new Image();
-    img.onload = () => {
+    img.onload = function() {
       overlayImg = img;
       baseWidth = img.width; baseHeight = img.height;
       canvas.width = baseWidth; canvas.height = baseHeight;
@@ -436,27 +235,27 @@
     markLoaded("labelOverlay", file.name);
   });
 
-  document.getElementById("upload").addEventListener("change", (e) => {
+  document.getElementById("upload").addEventListener("change", function(e) {
     const file = e.target.files[0]; if (!file) return;
     const reader = new FileReader();
-    reader.onload = ev => {
+    reader.onload = function(ev) {
       const img = new Image();
-      img.onload = () => { userImg = img; redraw(); };
+      img.onload = function() { userImg = img; redraw(); };
       img.src = ev.target.result;
     };
     reader.readAsDataURL(file);
     markLoaded("labelUpload", file.name);
   });
 
-  document.getElementById("zoom").addEventListener("input", e => {
+  document.getElementById("zoom").addEventListener("input", function(e) {
     zoom = parseFloat(e.target.value);
     document.getElementById("valZoom").textContent = zoom.toFixed(2); redraw();
   });
-  document.getElementById("offsetX").addEventListener("input", e => {
+  document.getElementById("offsetX").addEventListener("input", function(e) {
     offsetX = parseInt(e.target.value);
     document.getElementById("valX").textContent = offsetX; redraw();
   });
-  document.getElementById("offsetY").addEventListener("input", e => {
+  document.getElementById("offsetY").addEventListener("input", function(e) {
     offsetY = parseInt(e.target.value);
     document.getElementById("valY").textContent = offsetY; redraw();
   });
@@ -466,19 +265,19 @@
   const ctxLogo = canvasLogo.getContext("2d");
   let logoImg = null;
 
-  document.getElementById("uploadLogo").addEventListener("change", (e) => {
+  document.getElementById("uploadLogo").addEventListener("change", function(e) {
     const file = e.target.files[0]; if (!file) return;
     const reader = new FileReader();
-    reader.onload = ev => {
+    reader.onload = function(ev) {
       const img = new Image();
-      img.onload = () => {
+      img.onload = function() {
         logoImg = img;
         canvasLogo.width = 300; canvasLogo.height = 300;
         ctxLogo.clearRect(0, 0, 300, 300);
         const s = Math.min(300 / img.width, 300 / img.height);
         const dw = img.width * s, dh = img.height * s;
         ctxLogo.drawImage(img, (300 - dw) / 2, (300 - dh) / 2, dw, dh);
-        document.getElementById("canvasLogoMeta").textContent = `${img.width} × ${img.height} px`;
+        document.getElementById("canvasLogoMeta").textContent = img.width + " × " + img.height + " px";
         switchTab('logo');
       };
       img.src = ev.target.result;
@@ -495,12 +294,12 @@
     document.getElementById("tabLogo").classList.toggle("active",   tab === "logo");
   }
 
-  // ── HELPERS ──
   function markLoaded(id, name) {
     const el = document.getElementById(id);
     el.classList.add("loaded");
     el.childNodes[0].textContent = "✓ " + (name.length > 18 ? name.slice(0, 16) + "…" : name) + " ";
   }
+
   function showProgress() { document.getElementById("progressContainer").style.display = "block"; }
   function hideProgress() { document.getElementById("progressContainer").style.display = "none"; }
   function setProgress(pct, label) {
@@ -508,33 +307,16 @@
     document.getElementById("progressText").textContent = label;
   }
 
-  // ── Rendu composite vers canvas off-screen (fond + overlay) ──
-  // Retourne une dataURL à la résolution native de l'overlay/canvas
-  function buildCompositeDataURL() {
-    const w = canvas.width, h = canvas.height;
-    const off = document.createElement("canvas");
-    off.width = w; off.height = h;
-    const oc = off.getContext("2d");
-    if (userImg) {
-      const r = userImg.width / userImg.height;
-      let dw = w * zoom, dh = dw / r;
-      if (dh < h * zoom) { dh = h * zoom; dw = dh * r; }
-      oc.drawImage(userImg, (w - dw) / 2 + offsetX, (h - dh) / 2 + offsetY, dw, dh);
-    }
-    if (overlayImg) oc.drawImage(overlayImg, 0, 0, w, h);
-    return { dataURL: off.toDataURL("image/png"), ratio: w / h };
-  }
-
-  // ── EXPORT PNG ──
-  document.getElementById("download").addEventListener("click", () => {
+  // ── PNG ──
+  document.getElementById("download").addEventListener("click", function() {
     const a = document.createElement("a");
     a.download = "rendu.png";
     a.href = canvas.toDataURL("image/png");
     a.click();
   });
 
-  // ── EXPORT CARTES PDF 2 col ──
-  document.getElementById("downloadPDF").addEventListener("click", () => {
+  // ── PDF 2 col ──
+  document.getElementById("downloadPDF").addEventListener("click", function() {
     const { jsPDF } = window.jspdf;
     const pdf = new jsPDF("p", "mm", "a4");
     const imgData = canvas.toDataURL("image/png");
@@ -549,134 +331,87 @@
     pdf.save("cartes.pdf");
   });
 
-  // ── EXPORT CARTES PDF 5×10 ── (corrigé)
-  document.getElementById("downloadPDF50").addEventListener("click", async () => {
+  // ── PDF 5×10 CARTES ──
+  document.getElementById("downloadPDF50").addEventListener("click", async function() {
     const { jsPDF } = window.jspdf;
-    if (!userImg && !overlayImg) { alert("Veuillez d'abord uploader une image."); return; }
+    if (!userImg) { alert("Veuillez d'abord uploader une image de fond."); return; }
     const btn = document.getElementById("downloadPDF50");
     btn.disabled = true; showProgress();
     try {
       const pdf = new jsPDF("p", "mm", "a4");
+      const marginX = 10, marginY = 10, gapX = 2, gapY = 2;
       const cols = 5, rows = 10;
-      const mX = 10, mY = 10, gX = 2, gY = 2;
-      const cellW = (210 - 2*mX - (cols-1)*gX) / cols;  // ~36 mm
-      const cellH = (297 - 2*mY - (rows-1)*gY) / rows;  // ~27.7 mm
-
-      // ── Construire l'image composite une seule fois ──
-      // On travaille à une résolution fixe haute qualité (4× la cellule en px à 96 dpi)
-      const PX_PER_MM = 96 / 25.4;
-      const targetW = Math.round(cellW * PX_PER_MM * 4);
-      const targetH = Math.round(cellH * PX_PER_MM * 4);
-
-      const off = document.createElement("canvas");
-      // On conserve le ratio de l'overlay si dispo, sinon celui de userImg
-      const srcW = overlayImg ? overlayImg.width  : (userImg ? userImg.width  : targetW);
-      const srcH = overlayImg ? overlayImg.height : (userImg ? userImg.height : targetH);
-      const srcRatio = srcW / srcH;
-
-      // Dimensions off-screen : on cherche la taille minimale qui couvre la cellule
-      // en respectant le ratio source, sans upscale inutile
-      let offW, offH;
-      if (srcRatio >= cellW / cellH) {
-        offH = srcH; offW = offH * srcRatio;
-      } else {
-        offW = srcW; offH = offW / srcRatio;
-      }
-      // On plafonne à la résolution source pour éviter l'upscaling
-      offW = Math.min(offW, srcW * 2);
-      offH = Math.min(offH, srcH * 2);
-
-      off.width  = Math.round(offW);
-      off.height = Math.round(offH);
-      const oc = off.getContext("2d");
-
-      if (userImg) {
-        const r = userImg.width / userImg.height;
-        let dw = off.width * zoom, dh = dw / r;
-        if (dh < off.height * zoom) { dh = off.height * zoom; dw = dh * r; }
-        oc.drawImage(userImg, (off.width - dw) / 2 + offsetX, (off.height - dh) / 2 + offsetY, dw, dh);
-      }
-      if (overlayImg) oc.drawImage(overlayImg, 0, 0, off.width, off.height);
-
-      const composite = off.toDataURL("image/png");
-      const imgRatio  = off.width / off.height;
-
+      const cellWidth  = (210 - 2 * marginX - (cols - 1) * gapX) / cols;
+      const cellHeight = (297 - 2 * marginY - (rows - 1) * gapY) / rows;
+      const imgRatio = userImg.width / userImg.height;
       let processed = 0; const total = rows * cols;
+
       for (let row = 0; row < rows; row++) {
         for (let col = 0; col < cols; col++) {
-          const xCell = mX + col * (cellW + gX);
-          const yCell = mY + row * (cellH + gY);
-
-          // Ajustement pour conserver le ratio dans la cellule (cover → on utilise contain)
-          let dw = cellW, dh = cellW / imgRatio;
-          if (dh > cellH) { dh = cellH; dw = dh * imgRatio; }
-
-          // Centrage dans la cellule
-          const dx = xCell + (cellW - dw) / 2;
-          const dy = yCell + (cellH - dh) / 2;
-
-          pdf.addImage(composite, "PNG", dx, dy, dw, dh);
+          const xCell = marginX + col * (cellWidth + gapX);
+          const yCell = marginY + row * (cellHeight + gapY);
+          let dw = cellWidth;
+          let dh = dw / imgRatio;
+          if (dh > cellHeight) { dh = cellHeight; dw = dh * imgRatio; }
+          const x = xCell + (cellWidth  - dw) / 2;
+          const y = yCell + (cellHeight - dh) / 2;
+          pdf.addImage(userImg, "PNG", x, y, dw, dh);
           processed++;
-          setProgress(Math.round(processed/total*100), `${Math.round(processed/total*100)}% — ${processed}/${total}`);
-          if (processed % 5 === 0) await new Promise(r => setTimeout(r, 10));
+          setProgress(
+            Math.round(processed / total * 100),
+            Math.round(processed / total * 100) + "% (" + processed + "/" + total + ")"
+          );
+          if (processed % 5 === 0) await new Promise(function(r) { setTimeout(r, 10); });
         }
       }
       setProgress(100, "Finalisation…");
-      await new Promise(r => setTimeout(r, 100));
+      await new Promise(function(r) { setTimeout(r, 100); });
       pdf.save("cartes-5x10.pdf");
       setProgress(100, "✓ Téléchargé");
-      await new Promise(r => setTimeout(r, 1200));
+      await new Promise(function(r) { setTimeout(r, 1200); });
     } catch(err) {
       console.error(err);
       setProgress(0, "❌ Erreur");
-      await new Promise(r => setTimeout(r, 2000));
+      await new Promise(function(r) { setTimeout(r, 2000); });
     }
     hideProgress(); btn.disabled = false;
   });
 
-  // ── EXPORT TICKETS LOGO 5×10 ── (corrigé)
-  document.getElementById("downloadLogoGrid").addEventListener("click", async () => {
+  // ── PDF 5×10 TICKETS LOGO ──
+  document.getElementById("downloadLogoGrid").addEventListener("click", async function() {
     const { jsPDF } = window.jspdf;
     if (!logoImg) { alert("Veuillez d'abord uploader le logo."); return; }
     const btn = document.getElementById("downloadLogoGrid");
     btn.disabled = true; showProgress();
     try {
       const pdf = new jsPDF("p", "mm", "a4");
-      const cols = 5, rows = 10;
-      const mX = 10, mY = 10;
+      const cols = 5, rows = 10, mX = 10, mY = 10;
       const cellSize = (210 - 2 * mX) / cols;
       const gY = ((297 - 2 * mY) - rows * cellSize) / (rows - 1);
-
-      // Canvas off-screen carré à la résolution native du logo
-      const size = Math.max(logoImg.width, logoImg.height);
-      const off = document.createElement("canvas");
-      off.width = size; off.height = size;
-      const oc = off.getContext("2d");
-      const s = Math.min(size / logoImg.width, size / logoImg.height);
-      const dw = logoImg.width * s, dh = logoImg.height * s;
-      oc.drawImage(logoImg, (size - dw) / 2, (size - dh) / 2, dw, dh);
-      const logoData = off.toDataURL("image/png");
-
       let processed = 0; const total = rows * cols;
+
       for (let row = 0; row < rows; row++) {
         for (let col = 0; col < cols; col++) {
           const x = mX + col * cellSize;
           const y = mY + row * (cellSize + gY);
-          pdf.addImage(logoData, "PNG", x, y, cellSize, cellSize);
+          pdf.addImage(logoImg, "PNG", x, y, cellSize, cellSize);
           processed++;
-          setProgress(Math.round(processed/total*100), `${Math.round(processed/total*100)}% — ${processed}/${total}`);
-          if (processed % 5 === 0) await new Promise(r => setTimeout(r, 10));
+          setProgress(
+            Math.round(processed / total * 100),
+            Math.round(processed / total * 100) + "% (" + processed + "/" + total + ")"
+          );
+          if (processed % 5 === 0) await new Promise(function(r) { setTimeout(r, 10); });
         }
       }
       setProgress(100, "Finalisation…");
-      await new Promise(r => setTimeout(r, 100));
+      await new Promise(function(r) { setTimeout(r, 100); });
       pdf.save("tickets-logo-5x10.pdf");
       setProgress(100, "✓ Téléchargé");
-      await new Promise(r => setTimeout(r, 1200));
+      await new Promise(function(r) { setTimeout(r, 1200); });
     } catch(err) {
       console.error(err);
       setProgress(0, "❌ Erreur");
-      await new Promise(r => setTimeout(r, 2000));
+      await new Promise(function(r) { setTimeout(r, 2000); });
     }
     hideProgress(); btn.disabled = false;
   });
